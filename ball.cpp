@@ -1,50 +1,73 @@
 #include "ball.hpp"
+Ball::Ball(sf::Vector2f get_position, uint8_t get_radius, sf::Vector2f get_magnitude, sf::Color get_color)
+{
+  position = get_position;
+  radius = get_radius;
+  magnitude = get_magnitude;
+  color = get_color;
 
-Ball::Ball(uint8_t Gradius, sf::Vector2f Gvelocity,  sf::Vector2f origin, sf::Color color){
-  pos = origin;
-  velocity = Gvelocity;
-  cc = color;
-  ball.setRadius(Gradius);
-  ball.setFillColor(cc);
-  ball.setPosition(pos);
-  ball.setOrigin(Gradius/2, Gradius/2);
+  sprite.setFillColor(color);
+  sprite.setRadius(radius);
+  sprite.setPosition(position);
+
 }
-void Ball::updatePos(int x, int y){
-  pos = sf::Vector2f(x, y);
+void Ball::set_position(sf::Vector2f get_position)
+{
+
+  position = get_position;
+  //sprite.setFillColor(sf::Color((int)(position.x)%255, (int)(position.y)%255, (int)(magnitude.x)%255, 255));
+  sprite.setPosition(position);
 }
-sf::Vector2f Ball::GetPos(){
-  return pos;
+void Ball::set_magnitude(sf::Vector2f get_magnitude)
+{
+  magnitude = get_magnitude;
 }
-sf::Vector2f Ball::getVel(){
-  return velocity;
+sf::Vector2f Ball::get_location()
+{
+  return position;
 }
-void Ball::updateVel(int x, int y){
-  velocity = sf::Vector2f(x, y);
+sf::Vector2f Ball::get_magnitude()
+{
+  return magnitude;
 }
-void Ball::draw(sf::RenderWindow &Window){
-    ball.setPosition(pos);
-    Window.draw(ball);
+sf::CircleShape Ball::draw()
+{
+  return sprite;
 }
-//Takes the pattle posistions and also the size of them, this should work at any resolution 
-void Ball::checkBounce(sf::Vector2f p1pos, sf::Vector2f p2pos, sf::Vector2f size){
-  //wall collision
-  if(pos.x+radius >= X_RES || pos.x+radius <= 0){
-    velocity = sf::Vector2f(-velocity.x, velocity.y);
-  }
-  if(pos.y+radius >= Y_RES || pos.y+radius <= 0){
-    velocity.y = -velocity.y;
+void Ball::check_collision(sf::Vector2f get_position, sf::Vector2f get_size, bool enemy)
+{
+  //collosion check for paddles
+  //player paddle front side
+  if(position.x >= get_position.x && position.x <= get_position.x+get_size.x+1
+    && position.y >= get_position.y && position.y <= get_position.y+get_size.y
+    && !enemy){
+   magnitude.x =  -magnitude.x*1.001;
+    position.x = get_position.x+get_size.x+1.5;
+    //sprite.setRadius(radius);
+
   }
 
-  //paddle collision logic, this needs to be better implemented
-  if(pos.y+radius <= p1pos.y + size.y &&  pos.y+radius >= p1pos.y - size.y
-    &&  pos.x+radius <= p1pos.x + size.x &&  pos.x+radius >= p1pos.x - size.x){
-      velocity.x = -velocity.x;
-      pos.x += size.x/2;
+    //player paddle back side
+    if(position.x >= get_position.x-radius*2.0 && position.x <= get_position.x-2
+      && position.y >= get_position.y && position.y <= get_position.y+get_size.y
+      && !enemy){
+      magnitude.x =  -magnitude.x*1.001;
+      position.x = get_position.x-1.5-(float)radius*2.0;
+      //sprite.setRadius(radius);
     }
-    //enemy paddle
-    if(pos.y+radius <= p2pos.y + size.y &&  pos.y+radius >= p2pos.y - size.y
-      &&  pos.x+radius <= p2pos.x + size.x &&  pos.x+radius >= p2pos.x - size.x){
-        velocity.x = -velocity.x;
-        pos.x -= size.x/2;
-      }
+  if(position.x >= get_position.x-radius*2.0 && position.x <= get_position.x-2
+    && position.y >= get_position.y && position.y <= get_position.y+get_size.y
+    && enemy){
+    magnitude.x =  -magnitude.x*1.001;
+    position.x = get_position.x-1.5-(float)radius*2.0;
+    //sprite.setRadius(radius);
+  }
+  //Collosion Logic for walls
+  if(position.y+(float)radius*2.0 > (float)Y_RES || position.y < 0.0){
+    magnitude.y = -magnitude.y;
+  }
+  if(position.x+(float)radius*2.0 > (float)X_RES || position.x < 0.0){
+    magnitude.x = -magnitude.x;
+  }
+  set_position(get_location() + get_magnitude());
 }
