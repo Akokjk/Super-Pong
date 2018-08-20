@@ -37,10 +37,9 @@ sf::CircleShape Ball::draw()
 void Ball::check_collision(sf::Vector2f get_position, sf::Vector2f get_size, bool enemy)
 {
   //collosion check for paddles
-  //player paddle front side
+  //player paddle front side and enemy paddle back side 
   if(position.x >= get_position.x && position.x <= get_position.x+get_size.x+1
-    && position.y >= get_position.y && position.y <= get_position.y+get_size.y
-    && !enemy){
+    && position.y >= get_position.y && position.y <= get_position.y+get_size.y){
    magnitude.x =  -magnitude.x*1.001;
     position.x = get_position.x+get_size.x+1.5;
     //sprite.setRadius(radius);
