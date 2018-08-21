@@ -17,7 +17,8 @@ class Game
       Player              enemy;
       Ball                pong_ball;
       sf::Color           screen;
-      sf::UdpSocket       socket;
+      sf::UdpSocket       s_socket;
+      sf::UdpSocket       r_socket;
       std::thread         first;
       int                 count;
   public:
