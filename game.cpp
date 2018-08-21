@@ -6,19 +6,21 @@ void get_info(Player *player1, Player *enemy, Ball *pong_ball,
     sf::IpAddress your_ip = "25.81.202.83";
     unsigned short y_port = 12000;
     unsigned short e_port = 12000;
-    std::cout << "Enter your ip & send port: ";
-    std::cin >> your_ip  >> y_port;
-    std::cout << "Input Enemy ip & send port: ";
+    std::cout << "Enter your send port: ";
+    std::cin >>  y_port;
+    std::cout << "Input enemy ip & send port: ";
     std::cin >> recipient >> e_port;
     s_socket->bind(y_port);
     r_socket->bind(e_port);
+    s_socket->setBlocking(false);
+    r_socket->setBlocking(false);
     while(1){
 
       sf::Vector2f data[2];
       data[0] = player1->get_location();
       data[1] = pong_ball->get_location();
       std::size_t received = 0;
-      if(s_socket->send(data, sizeof(data), your_ip, y_port) != sf::Socket::Done) {
+      if(s_socket->send(data, sizeof(data), recipient, y_port) != sf::Socket::Done) {
         std::cout << "\rError cannot send data";
       }
       sf::Vector2f data1[2];
