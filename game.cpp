@@ -3,11 +3,12 @@
 void get_info(Player *player1, Player *enemy, Ball *pong_ball,
   sf::UdpSocket *s_socket, sf::UdpSocket *r_socket, int* count){
     sf::IpAddress recipient = "25.81.202.83";
+    sf::IpAddress your_ip = "25.81.202.83";
     unsigned short y_port = 12000;
     unsigned short e_port = 12000;
-    std::cout << "Enter send port: ";
-    std::cin >> y_port;
-    std::cout << "Input Enemy ip and send port: ";
+    std::cout << "Enter your ip & send port: ";
+    std::cin >> your_ip  >> y_port;
+    std::cout << "Input Enemy ip & send port: ";
     std::cin >> recipient >> e_port;
     s_socket->bind(y_port);
     r_socket->bind(e_port);
@@ -17,16 +18,16 @@ void get_info(Player *player1, Player *enemy, Ball *pong_ball,
       data[0] = player1->get_location();
       data[1] = pong_ball->get_location();
       std::size_t received = 0;
-      if(s_socket->send(data, sizeof(data), sf::IpAddress::Broadcast, y_port) != sf::Socket::Done) {
+      if(s_socket->send(data, sizeof(data), your_ip, y_port) != sf::Socket::Done) {
         std::cout << "\rError cannot send data";
       }
       sf::Vector2f data1[2];
       if(r_socket->receive(data1, sizeof(data1), received, recipient, e_port)!= sf::Socket::Done){
         std::cout << "\rError cannot recieve data";
       }
-
+      std::cout << "\rReceived " << received << " bytes from " << recipient << " on port " << e_port << std::endl;
       enemy->set_position(data1[0]);
-      (if y_port == 2525)pong_ball->set_position(data1[1]);
+      if( y_port == 2525)pong_ball->set_position(data1[1]);
       count[0]++;
   }
 }
